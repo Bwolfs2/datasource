@@ -1,8 +1,11 @@
 name: datasource
-description: A new Flutter package project.
+description: This package is a Helper to Consume Firebase on a Easy way.
 version: 0.0.1
 
-
+repository: https://github.com/Bwolfs2/datasource
+issue_tracker: https://github.com/Bwolfs2/datasource/issues
+homepage: https://github.com/Bwolfs2/datasource
+documentation: https://github.com/Bwolfs2/datasource
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
