@@ -1,0 +1,84 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:flutter_triple/flutter_triple.dart';
+
+import '../domain/entities/event_entity.dart';
+import 'home_store.dart';
+
+class HomePage extends StatelessWidget {
+  final String title;
+  HomePage({Key? key, this.title = "Home"}) : super(key: key);
+
+  final store = Modular.get<HomeStore>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Counter'),
+        actions: [
+          IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                store.reloadData();
+              })
+        ],
+      ),
+      body: ScopedBuilder<HomeStore, Exception, List<EventEntity>>.transition(
+        store: store,
+        onLoading: (context) => const Center(
+          child: CircularProgressIndicator.adaptive(),
+        ),
+        onState: (_, events) {
+          if (events.isEmpty) {
+            return Container();
+          }
+          return ListView.builder(
+            itemCount: events.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PhysicalModel(
+                  color: Colors.white,
+                  elevation: 2,
+                  child: ListTile(
+                    selected: events[index].completed,
+                    selectedTileColor: Colors.green[700]?.withOpacity(.6),
+                    title: Text(events[index].name),
+                    subtitle: Text("${events[index].addresses.length} ${events[index].dateEvent.day}-${events[index].dateEvent.month}-${events[index].dateEvent.year}"),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onPressed: () {
+                        store.removeEvent(events[index].id);
+                      },
+                    ),
+                    onTap: () {
+                      store.updateEvent(events[index]);
+                    },
+                  ),
+                ),
+              );
+            },
+          );
+        },
+        onError: (context, error) => const Center(
+          child: Text(
+            'Can`t get the Data',
+            style: TextStyle(color: Colors.red),
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          store.addEvent();
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+abstract class TesteMix {}
